@@ -15,6 +15,14 @@ OBS_MODULE_USE_DEFAULT_LOCALE("obs-stroke-glow-shadow", "en-US");
 
 OBS_MODULE_AUTHOR("FiniteSingularity");
 
+MODULE_EXPORT const char *obs_module_name(void) {
+	return obs_module_text("Name");
+}
+
+MODULE_EXPORT const char *obs_module_description(void) {
+	return obs_module_text("Description");
+}
+
 bool obs_module_load(void)
 {
 	blog(LOG_INFO, "[Stroke Glow Shadow] loaded version %s",
