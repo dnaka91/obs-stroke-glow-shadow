@@ -16,7 +16,7 @@ struct obs_source_info obs_stroke_source = {
 	.video_tick = stroke_filter_video_tick,
 	.get_width = stroke_filter_width,
 	.get_height = stroke_filter_height,
-	.get_properties = stroke_filter_properties,
+	.get_properties = stroke_source_properties,
 	.get_defaults = stroke_filter_defaults,
 	.icon_type = OBS_ICON_TYPE_COLOR};
 
@@ -140,12 +140,12 @@ static void stroke_filter_update(void *data, obs_data_t *settings)
 						  "stroke_fill_color"));
 
 	filter->fill_type =
-		(uint32_t)obs_data_get_int(settings, "stroke_fill_type");
+		(enum stroke_fill_type)obs_data_get_int(settings, "stroke_fill_type");
 
 	filter->offset_quality =
-		(uint32_t)obs_data_get_int(settings, "stroke_offset_quality");
+		(enum offset_quality)obs_data_get_int(settings, "stroke_offset_quality");
 	filter->stroke_position =
-		(uint32_t)obs_data_get_int(settings, "stroke_position");
+		(enum stroke_position)obs_data_get_int(settings, "stroke_position");
 	filter->anti_alias = obs_data_get_bool(settings, "anti_alias");
 	filter->ignore_source_border =
 		obs_data_get_bool(settings, "ignore_source_border");
@@ -256,14 +256,14 @@ static void stroke_filter_video_render(void *data, gs_effect_t *effect)
 	filter->rendering = false;
 }
 
-static obs_properties_t *stroke_filter_properties(void *data)
+static obs_properties_t *properties(void *data, bool is_source)
 {
 	stroke_filter_data_t *filter = data;
 
 	obs_properties_t *props = obs_properties_create();
 	obs_properties_set_param(props, filter, NULL);
 
-	if (filter->is_source) {
+	if (is_source) {
 		obs_property_t *stroke_source = obs_properties_add_list(
 			props, "stroke_source",
 			obs_module_text("StrokeSource.Source"),
@@ -362,6 +362,14 @@ static obs_properties_t *stroke_filter_properties(void *data)
 				OBS_TEXT_INFO);
 
 	return props;
+}
+
+static obs_properties_t *stroke_filter_properties(void *data) {
+	return properties(data, false);
+}
+
+static obs_properties_t *stroke_source_properties(void *data) {
+	return properties(data, true);
 }
 
 static void stroke_filter_video_tick(void *data, float seconds)
