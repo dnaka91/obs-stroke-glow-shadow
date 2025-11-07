@@ -142,7 +142,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ubuntu: ["ubuntu-20.04", "ubuntu-22.04"]
+        ubuntu: ["ubuntu-22.04"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
@@ -187,11 +187,11 @@ jobs:
           path: "*.tar.gz"
   windows-build:
     name: "Windows Build"
-    runs-on: [windows-latest]
+    runs-on: [windows-2022]
     strategy:
       fail-fast: true
       matrix:
-        target: [x64, x86]
+        target: [x64]
         include:
           - target: x64
             cmake_build: "x64"
@@ -219,7 +219,7 @@ jobs:
           path: plugins/${{ env.PLUGIN_NAME}}
       - name: Add plugin to obs cmake
         shell: cmd
-        run: echo add_subdirectory(${{ env.PLUGIN_NAME }}) >> plugins/CMakeLists.txt
+        run: echo add_subdirectory(${{ env.PLUGIN_NAME }}) > plugins/CMakeLists.txt
       - name: Fetch Git Tags
         run: git fetch --prune --tags --unshallow
       - name: "Install prerequisite: QT"
